@@ -14,6 +14,7 @@ DELTA = {pg.K_UP:(0, -5),
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+
 def check_bound(rct : pg.Rect) -> tuple[bool, bool]:
     """
     引数で与えられたRectが画面の中過疎とかを判定する
@@ -28,7 +29,13 @@ def check_bound(rct : pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+
 def gameover(screen: pg.Surface) -> tuple[int, int]:
+    """
+    gameover画面を表示する関数
+    引数: screen
+    戻り値: なし
+    """
     bl = pg.Surface((WIDTH, HEIGHT))
     pg.draw.rect(bl, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))
     bl.set_alpha(200)
@@ -45,6 +52,7 @@ def gameover(screen: pg.Surface) -> tuple[int, int]:
     screen.blit(txt, [WIDTH / 2 - 190, HEIGHT / 2])
     screen.blit(go_kokaton, go_kokaton_rct)
     screen.blit(go_kokaton, go_kokaton_rct2)
+
 
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     accs = [a for a in range(1, 11)]
@@ -74,22 +82,15 @@ def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
     
     # 移動方向に応じた回転角度を辞書で定義
     direction_to_angle = {
-        (0, -1): 90,  # 上
-        (0, 1): -90,    # 下
-        (-1, 0): 0,  # 左
-        (1, 0): 180      # 右
+        (-5, 0): 0,  
+        (0, -5): 90,    
+        (5, 0): 0,  
+        (0, 5): -90,
     }
     
-    # 移動方向を正規化（1または-1に変換）
-    norm_mv = (
-        1 if sum_mv[0] > 0 else -1 if sum_mv[0] < 0 else 0,
-        1 if sum_mv[1] > 0 else -1 if sum_mv[1] < 0 else 0,
-    )
-    
     # 辞書で角度を取得（該当なしは0度）
-    angle = direction_to_angle.get(norm_mv, 0)
+    angle = direction_to_angle(sum_mv)
     return pg.transform.rotozoom(img, angle, 0.9)
-
 
 
 def main():
