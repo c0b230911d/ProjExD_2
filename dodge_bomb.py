@@ -55,6 +55,9 @@ def gameover(screen: pg.Surface) -> tuple[int, int]:
 
 
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    爆弾の画像リストと加速度リストを返す
+    """
     accs = [a for a in range(1, 11)]
     bb_imgs = []
     for r in range(1, 11):
