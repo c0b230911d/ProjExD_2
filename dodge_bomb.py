@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -26,6 +27,24 @@ def check_bound(rct : pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+def gameover(screen: pg.Surface) -> tuple[int, int]:
+    bl = pg.Surface((WIDTH, HEIGHT))
+    pg.draw.rect(bl, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))
+    bl.set_alpha(200)
+    go_fonto = pg.font.Font(None, 120)
+    txt = go_fonto.render("GameOver", True, (255, 255, 255))
+    go_kokaton = pg.image.load("fig/8.png")
+    go_kokaton_rct = go_kokaton.get_rect()
+    go_kokaton_rct2 = go_kokaton.get_rect()
+    go_kokaton_rct.topleft = WIDTH  / 2 - 270, HEIGHT / 2
+    go_kokaton_rct2.topleft = WIDTH / 2 + 290, HEIGHT / 2
+    bl_rct = bl.get_rect()
+    bl_rct.topleft = 0, 0
+    screen.blit(bl, bl_rct)
+    screen.blit(txt, [WIDTH / 2 - 190, HEIGHT / 2])
+    screen.blit(go_kokaton, go_kokaton_rct)
+    screen.blit(go_kokaton, go_kokaton_rct2)
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -46,7 +65,9 @@ def main():
             if event.type == pg.QUIT: 
                 return
         if kk_rct.colliderect(bb_rct):
-            print("ゲームオーバー")
+            gameover(screen) 
+            pg.display.update()
+            time.sleep(5)
             return 
         screen.blit(bg_img, [0, 0]) 
 
