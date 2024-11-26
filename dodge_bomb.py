@@ -56,7 +56,40 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
         bb_imgs.append(bb_img)
     return bb_imgs, accs
 
+def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
+    """
+    キャラクター画像を移動方向に応じて回転させる。
+    引数:
+        sum_mv: (x方向の移動量, y方向の移動量) のタプル
+    戻り値:
+        回転したこうかとん画像 (pg.Surface)
+    """
+    base_img = pg.image.load("fig/3.png")  # 基本のこうかとん画像を読み込む
+    base_img_flip = pg.transform.flip(base_img, True, True)
+    if sum_mv[0] == -5:
+        img = base_img
+    else:
+        img = base_img_flip
+    base_img = pg.transform.rotozoom(img, 0, 0.9)  # サイズ変更
     
+    # 移動方向に応じた回転角度を辞書で定義
+    direction_to_angle = {
+        (0, -1): 90,  # 上
+        (0, 1): -90,    # 下
+        (-1, 0): 0,  # 左
+        (1, 0): 180      # 右
+    }
+    
+    # 移動方向を正規化（1または-1に変換）
+    norm_mv = (
+        1 if sum_mv[0] > 0 else -1 if sum_mv[0] < 0 else 0,
+        1 if sum_mv[1] > 0 else -1 if sum_mv[1] < 0 else 0,
+    )
+    
+    # 辞書で角度を取得（該当なしは0度）
+    angle = direction_to_angle.get(norm_mv, 0)
+    return pg.transform.rotozoom(img, angle, 0.9)
+
 
 
 def main():
@@ -90,6 +123,8 @@ def main():
             if key_lst[key]:
                 sum_mv[0] += tpl[0]
                 sum_mv[1] += tpl[1]
+        kk_img = get_kk_img((0, 0))
+        kk_img = get_kk_img(tuple(sum_mv))
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
